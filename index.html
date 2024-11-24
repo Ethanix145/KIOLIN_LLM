@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI chatbot for education - Elegant, fast, and user-friendly interface. Get answers with ease.">
+  <meta name="keywords" content="AI, chatbot, education, elegant UI, sleek, instant answers">
+  <meta name="author" content="Your Name">
+  <title>KIOLIN</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #007aff, #ff4b5c);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 25px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      max-height: 700px;
+      transition: all 0.3s ease-in-out;
+      backdrop-filter: blur(15px);
+      margin: 20px auto;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 25px 20px;
+      font-size: 1.8em;
+      font-weight: 500;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    h2 {
+      color: #ffffff;
+      align-content: center;
+      justify-content: center;
+      display: flex;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px) brightness(1.2);
+      -webkit-backdrop-filter: blur(10px) brightness(1.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .chat-input-container {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .chat-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 25px;
+      border: 1px solid rgba(200, 200, 200, 0.5);
+      background: rgba(255, 255, 255, 0.7);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .chat-input:focus {
+      border-color: #007aff;
+      outline: none;
+    }
+
+    .message {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+      max-width: 80%;
+      word-wrap: break-word;
+      font-size: 1em;
+      color: white;
+    }
+
+    .message.user {
+      align-self: flex-end;
+    }
+
+    .message.ai {
+      align-self: flex-start;
+    }
+
+    .thinking {
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      margin-top: 5px;
+      font-size: 0.8em;
+      line-height: 1.4;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .send-button {
+      padding: 12px 20px;
+      background-color: #007aff;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .send-button:hover {
+      background-color: #0051a8;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 80%;
+    }
+
+    .suggestion-card {
+      background-color: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: white;
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .suggestion-card:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+      
+    }
+
+    @media (max-width: 768px) {
+      body {
+        justify-content: flex-start;
+        align-items: center;
+      }
+      .chat-container {
+        max-height: 90vh;
+        margin-top: 10px;
+      }
+      .header {
+        font-size: 1.6em;
+        padding: 20px;
+      }
+      .chat-input-container {
+        padding: 12px;
+      }
+      .chat-input {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="header">KIOLIN</div>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="chat-input-container">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask a question..." aria-label="Chat input" />
+      <button class="send-button" id="sendButton" aria-label="Send message">Send</button>
+    </div>
+    <div class="suggestions">
+      <h2>Suggestions</h2>
+      <div class="suggestion-card" data-question="What is Photosynthesis?">What is Photosynthesis?</div>
+      <div class="suggestion-card" data-question="What is Aura?">What is Aura?</div>
+    </div>
+  </div>
+
+  <script>class ChatInterface {
+    constructor() {
+      this.chatBox = document.getElementById('chatBox');
+      this.chatInput = document.getElementById('chatInput');
+      this.sendButton = document.getElementById('sendButton');
+      this.suggestions = document.querySelectorAll('.suggestion-card');
+      this.suggestionsContainer = document.querySelector('.suggestions');
+      this.apiEndpoint = 'http://localhost:3000/chat';
+      this.isProcessing = false;
+  
+      this.sendButton.addEventListener('click', () => this.sendMessage());
+      this.chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.sendMessage();
+        }
+      });
+      this.suggestions.forEach((card) => {
+        card.addEventListener('click', () => {
+          this.sendMessage(card.dataset.question);
+          this.hideSuggestions();
+        });
+      });
+    }
+  
+    async sendMessage(userMessage = null) {
+      if (this.isProcessing) return;
+  
+      const message = userMessage || this.chatInput.value.trim();
+      if (!message) return;
+  
+      try {
+        this.isProcessing = true;
+        this.addMessage('user', this.escapeHTML(message));
+        this.addThinkingIndicator();
+        this.chatInput.value = '';
+  
+        const response = await fetch(this.apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: message,
+            chatHistory: [], // Add previous messages if needed
+          }),
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(`Server Error: ${response.status}`);
+        }
+  
+        this.addMessage('ai', data.reply || 'No reply from AI');
+      } catch (error) {
+        console.error(error);
+        this.addMessage('error', 'Something went wrong, please try again.');
+      } finally {
+        this.removeThinkingIndicator();
+        this.isProcessing = false;
+      }
+    }
+  
+    addMessage(sender, message) {
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message', sender);
+      messageElement.innerHTML = this.escapeHTML(message);
+      this.chatBox.appendChild(messageElement);
+      this.chatBox.scrollTop = this.chatBox.scrollHeight;
+    }
+  
+    addThinkingIndicator() {
+      const thinkingIndicator = document.createElement('div');
+      thinkingIndicator.classList.add('thinking');
+      thinkingIndicator.innerText = 'thinking...';
+      this.chatBox.appendChild(thinkingIndicator);
+      this.chatBox.scrollTop = this.chatBox.scrollHeight;
+    }
+  
+    removeThinkingIndicator() {
+      const thinkingIndicator = document.querySelector('.thinking');
+      if (thinkingIndicator) thinkingIndicator.remove();
+    }
+  
+    escapeHTML(str) {
+      const element = document.createElement('div');
+      if (str) {
+        element.innerText = str;
+        element.textContent = str;
+      }
+      return element.innerHTML;
+    }
+  
+    hideSuggestions() {
+      this.suggestionsContainer.style.display = 'none';
+    }
+  }
+  
+  const chatInterface = new ChatInterface();
+  </script>
+  <script src="./server.js"></script>
+</body>
+</html>
